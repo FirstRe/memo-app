@@ -1,11 +1,6 @@
 import axios from '@/lib/axios'
-import { LoginRequest, LoginResponse } from '@/types/api/auth/interfact'
-import useSWRApi from '@/utils/hook/useSWRApi'
-import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
-import { ResponseData } from '@/types/api/interface'
-import { AxiosResponse } from 'axios'
 import useSWRMutation from 'swr/mutation'
 import { defaultTo } from 'lodash'
 import { UseFormSetError } from 'react-hook-form'
@@ -13,11 +8,10 @@ import { ILoginForm } from '../interface'
 import { CookiesKey } from '@/constant'
 
 interface IUseLoginProps {
-  request: LoginRequest
   setError: UseFormSetError<ILoginForm>
 }
 
-export const useLogin = ({ request, setError }: IUseLoginProps) => {
+export const useLogin = ({ setError }: IUseLoginProps) => {
   const router = useRouter()
 
   const fetchLogin = (
@@ -42,12 +36,9 @@ export const useLogin = ({ request, setError }: IUseLoginProps) => {
     },
   )
 
-  const fetcher = useCallback(async () => {
-    trigger(request)
-  }, [request, trigger])
 
   return {
-    fetcher,
+    trigger,
     loading: isMutating,
   }
 }

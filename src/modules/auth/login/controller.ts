@@ -3,25 +3,20 @@ import { ILoginForm } from './interface'
 import { schema } from './schema'
 import { useForm, UseFormSetError } from 'react-hook-form'
 import { useLogin } from './apiHandler/useLogin'
-import { LoginRequest } from '@/types/api/auth/interfact'
 import { useCallback } from 'react'
 
 export const useLoginController = () => {
   const formHandler = useFormHandler()
-  const { getValues, setError, handleSubmit } = formHandler
+  const { watch, setError, handleSubmit } = formHandler
 
-  const loginValue = getValues()
-  const { fetcher, loading } = useQueryHandler(
-    {
-      username: loginValue.username,
-      password: loginValue.password,
-    },
-    setError,
-  )
+  const { trigger, loading } = useQueryHandler(setError)
 
   const onSubmit = useCallback(() => {
-    handleSubmit(fetcher)()
-  }, [fetcher, handleSubmit])
+    handleSubmit(() => {
+      const loginValue = watch()
+      trigger(loginValue)
+    })()
+  }, [handleSubmit, trigger, watch])
 
   return {
     formHandler,
@@ -31,11 +26,14 @@ export const useLoginController = () => {
 }
 
 const useQueryHandler = (
-  request: LoginRequest,
   setError: UseFormSetError<ILoginForm>,
 ) => {
-  const { fetcher, loading: isLoginLoading } = useLogin({ request, setError })
-  return { fetcher, loading: isLoginLoading }
+  const { trigger, loading: isLoginLoading } = useLogin({ setError })
+
+  return {
+    trigger,
+    loading: isLoginLoading,
+  }
 }
 
 export const useFormHandler = () => {
