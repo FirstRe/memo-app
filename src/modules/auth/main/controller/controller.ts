@@ -57,7 +57,7 @@ export const useMainController = () => {
       setIsEnableAdd(true)
       setIsShowNew(true)
     },
-    [setIsEnableAdd, setIsShowNew],
+    [setIsEnableAdd, setIsShowNew, fetchUpsertMemo],
   )
 
   const onSubmit = useCallback(
@@ -103,12 +103,14 @@ const useQueryHandler = (
   setValue: UseFormSetValue<IMemoForm>,
   userId: string | null,
 ) => {
+  console.log({ userId })
   const fetch = useCallback(() => {
+    console.log({ userId2: userId })
     const { data, status } = mockGetMemo(defaultTo(userId, ''))
     if (status === 200 && data !== null) {
       setValue('memo', mapMemo(data))
     }
-  }, [userId])
+  }, [userId, setValue])
 
   useEffect(() => {
     fetch()

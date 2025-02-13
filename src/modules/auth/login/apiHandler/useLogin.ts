@@ -11,27 +11,33 @@ interface IUseLoginProps {}
 export const useLogin = ({}: IUseLoginProps) => {
   const router = useRouter()
 
-  const trigger = useCallback(({ username, password }: ILoginForm) => {
-    const data = repos.users.find((e) => e.username === username)
-    const storageItems = {
-      accessToken: defaultTo(data?.token, ''),
-      userId: defaultTo(data?.id, ''),
-      userRole: defaultTo(data?.role, ''),
-      email: defaultTo(data?.email, ''),
-    }
-    Object.entries(storageItems).forEach(([key, value]) => {
-      if (CookiesKey[key as keyof typeof CookiesKey]) {
-        Cookies.set(CookiesKey[key as keyof typeof CookiesKey], value)
+  const trigger = useCallback(
+    ({ username, password }: ILoginForm) => {
+      const data = repos.users.find((e) => e.username === username)
+      const storageItems = {
+        accessToken: defaultTo(data?.token, ''),
+        userId: defaultTo(data?.id, ''),
+        userRole: defaultTo(data?.role, ''),
+        email: defaultTo(data?.email, ''),
       }
-    })
+      Object.entries(storageItems).forEach(([key, value]) => {
+        if (CookiesKey[key as keyof typeof CookiesKey]) {
+          Cookies.set(CookiesKey[key as keyof typeof CookiesKey], value)
+        }
+      })
 
-    Object.entries(storageItems).forEach(([key, value]) => {
-      if (StorageKey[key as keyof typeof StorageKey]) {
-        localStorage.setItem(StorageKey[key as keyof typeof StorageKey], value)
-      }
-    })
-    router.replace('/')
-  }, [])
+      Object.entries(storageItems).forEach(([key, value]) => {
+        if (StorageKey[key as keyof typeof StorageKey]) {
+          localStorage.setItem(
+            StorageKey[key as keyof typeof StorageKey],
+            value,
+          )
+        }
+      })
+      router.replace('/')
+    },
+    [router],
+  )
 
   // const fetchLogin = (
   //   url: string,
