@@ -1,3 +1,4 @@
+import { CookiesKey } from '@/constant'
 import Axios, {
   AxiosRequestConfig,
   AxiosRequestHeaders,
@@ -6,7 +7,8 @@ import Axios, {
 import Cookies from 'js-cookie'
 
 const authRequestInterceptor = (axiosConfig: AxiosRequestConfig) => {
-  const token = Cookies.get('token')
+  const token = Cookies.get(CookiesKey.accessToken)
+  const userId = Cookies.get(CookiesKey.userId)
 
   const headers: Record<any, any> = {
     'content-type':
@@ -15,6 +17,7 @@ const authRequestInterceptor = (axiosConfig: AxiosRequestConfig) => {
   }
 
   if (token) headers.authorization = `Bearer ${token}`
+  if (userId) headers['user-id'] = userId
 
   return {
     ...axiosConfig,

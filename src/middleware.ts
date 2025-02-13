@@ -31,8 +31,6 @@ export async function middleware(req: NextRequest) {
 
       const id = data.data.id
 
-      response.headers.set('x-user', id)
-
       return response
     }
 

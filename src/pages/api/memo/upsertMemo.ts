@@ -10,10 +10,10 @@ const handler = async (
 ) => {
   if (req.method === 'POST') {
     try {
-      const userId = req.headers['x-user'] as string
-      const { id, memo } = req.body as IMemoRequest
+      const userId = req.headers['user-id'] as string
+      const { id, memo, index } = req.body as IMemoRequest
 
-      const user = await prisma.user.findFirst({
+      const user = await prisma.user.findUnique({
         where: {
           id: userId,
         },
@@ -34,6 +34,7 @@ const handler = async (
           },
           create: {
             memo,
+            index,
             createdBy: user.username,
             updatedBy: user.username,
             userId: user.id,

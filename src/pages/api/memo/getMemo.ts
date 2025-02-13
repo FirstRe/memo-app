@@ -9,9 +9,9 @@ const handler = async (
 ) => {
   if (req.method === 'GET') {
     try {
-      const userId = req.headers['x-user'] as string
+      const userId = req.headers['user-id'] as string
 
-      const user = await prisma.user.findFirst({
+      const user = await prisma.user.findUnique({
         where: {
           id: userId,
         },
@@ -34,6 +34,9 @@ const handler = async (
         where: isAdmin ? undefined : { userId: user?.id },
         orderBy: {
           createdAt: isAdmin ? 'desc' : 'asc',
+        },
+        include: {
+          user: true,
         },
       })
 

@@ -3,8 +3,9 @@ import * as jwt from 'jsonwebtoken'
 import { IUser, repos } from '@/utils/mock'
 import { ResponseData } from '@/types/api/interface'
 import { LoginResponse } from '@/types/api/auth/interfact'
+import { prisma } from '@/lib/prisma'
 
-const handler = (
+const handler = async (
   req: NextApiRequest,
   res: NextApiResponse<ResponseData<LoginResponse> | { message: string }>,
 ) => {
@@ -12,10 +13,10 @@ const handler = (
     try {
       const { username, password } = req.body
 
-      const token = login(username, password)
+      const { token, user } = await login(username, password)
 
       res.status(200).json({
-        data: { token: token },
+        data: { token, user },
         status: { message: '', code: 1000 },
       })
     } catch (error: any) {
@@ -29,8 +30,14 @@ const handler = (
   }
 }
 
-const login = (name: string, password: string): string => {
-  const user = repos.users.find((e) => e.name === name)
+const login = async (name: string, password: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      username: name,
+    },
+  })
+
+
   if (!user) {
     throw new Error('พาสเวิร์ดไม่ถูกต้อง')
   }
@@ -39,13 +46,21 @@ const login = (name: string, password: string): string => {
     throw new Error('พาสเวิร์ดไม่ถูกต้อง')
   }
 
-  return getToken(user)
+  return {
+    token: getToken(user),
+    user: {
+      id: user.id,
+      name: user.username,
+      email: user.email,
+      role: user.role,
+    },
+  }
 }
 
 const getToken = (user: IUser): string => {
   const payload = {
     id: user.id,
-    name: user.name,
+    name: user.username,
     email: user.email,
     role: user.role,
   }

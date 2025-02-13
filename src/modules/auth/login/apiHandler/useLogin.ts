@@ -5,7 +5,7 @@ import useSWRMutation from 'swr/mutation'
 import { defaultTo } from 'lodash'
 import { UseFormSetError } from 'react-hook-form'
 import { ILoginForm } from '../interface'
-import { CookiesKey } from '@/constant'
+import { CookiesKey, StorageKey } from '@/constant'
 
 interface IUseLoginProps {
   setError: UseFormSetError<ILoginForm>
@@ -29,13 +29,31 @@ export const useLogin = ({ setError }: IUseLoginProps) => {
             message: data.status.message,
           })
         } else {
-          Cookies.set(CookiesKey.accessToken, defaultTo(data.data?.token, ''))
+          const storageItems = {
+            accessToken: defaultTo(data.data?.token, ''),
+            userId: defaultTo(data.data?.user.id, ''),
+            userRole: defaultTo(data.data?.user.role, ''),
+            email: defaultTo(data.data?.user.email, ''),
+          }
+          Object.entries(storageItems).forEach(([key, value]) => {
+            if (CookiesKey[key as keyof typeof CookiesKey]) {
+              Cookies.set(CookiesKey[key as keyof typeof CookiesKey], value)
+            }
+          })
+
+          Object.entries(storageItems).forEach(([key, value]) => {
+            if (StorageKey[key as keyof typeof StorageKey]) {
+              localStorage.setItem(
+                StorageKey[key as keyof typeof StorageKey],
+                value,
+              )
+            }
+          })
           router.push('/')
         }
       },
     },
   )
-
 
   return {
     trigger,

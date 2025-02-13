@@ -68,12 +68,21 @@ const Input = (props: IInputProps) => {
           value={value}
           disabled={disabled}
           onChange={onChange}
+          allowClear
+          status={error ? 'error' : ''}
+          style={{
+            width: '234px',
+            height: '176px',
+            resize: 'none',
+            borderRadius: '12px',
+            backgroundColor: '#D4D4D84D',
+          }}
         />
       ) : (
         <AntInput
           ref={inputRef}
           id={id}
-          style={{ borderRadius: '12px', color: '#fff' }}
+          style={{ borderRadius: '12px', color: '#fff', height: '42px' }}
           name={name}
           type={type}
           value={value}
@@ -87,7 +96,7 @@ const Input = (props: IInputProps) => {
           {...rest}
         />
       )}
-      {error && <div className="text-rose-600 text-xs mt-1">{error}</div>}
+      {error && <div className="mt-1 text-xs text-rose-600">{error}</div>}
     </div>
   )
 }

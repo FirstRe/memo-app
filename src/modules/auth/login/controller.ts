@@ -15,7 +15,7 @@ export const useLoginController = () => {
     handleSubmit(() => {
       const loginValue = watch()
       trigger(loginValue)
-    })()
+    })()  
   }, [handleSubmit, trigger, watch])
 
   return {

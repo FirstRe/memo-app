@@ -18,7 +18,7 @@ const LoginPage = () => {
               </p>
               <InputForm
                 id="username"
-                className="mb-[20px] bg-primary"
+                className="mb-[10px] bg-primary lg:mb-[20px]"
                 type="text"
                 name="username"
                 control={formHandler.control}
@@ -31,7 +31,7 @@ const LoginPage = () => {
               />
               <InputForm
                 id="password"
-                className="mb-[20px] bg-primary"
+                className="mb-[10px] bg-primary lg:mb-[20px]"
                 type="password"
                 name="password"
                 control={formHandler.control}
@@ -40,12 +40,11 @@ const LoginPage = () => {
                   label: 'รหัสผ่าน',
                   required: false,
                   classNames: 'text-12-16-400 text-white mb-[12px]',
-                  classInput: 'text-white!',
+                  classInput: 'text-white! h-[42px]!',
                 }}
               />
-
               <Button
-                className="!h-[40px] !w-[100%] !bg-white font-KANIT text-14-20-400 !normal-case !text-black !no-underline"
+                className="mt-0 !h-[40px] !w-[100%] !bg-white font-KANIT text-14-20-400 !normal-case !text-black !no-underline"
                 color="default"
                 variant="solid"
                 onClick={onSubmit}>

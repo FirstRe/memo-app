@@ -29,6 +29,7 @@ model user {
 model memo {
   id     String        @id @default(uuid())
   memo String
+  index Int? @default(0)
   userId String 
   user   user @relation("Users_Memos", fields: [userId], references: [id])
   createdBy String
