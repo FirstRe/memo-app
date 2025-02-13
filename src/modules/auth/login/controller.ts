@@ -21,7 +21,7 @@ export const useLoginController = () => {
 
   const onSubmit = useCallback(() => {
     handleSubmit(fetcher)()
-  }, [])
+  }, [fetcher, handleSubmit])
 
   return {
     formHandler,
