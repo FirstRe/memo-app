@@ -9,6 +9,7 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse<ResponseData<LoginResponse> | { message: string }>,
 ) => {
+  console.log('req.method', req.method)
   if (req.method === 'POST') {
     try {
       const { username, password } = req.body
@@ -20,6 +21,7 @@ const handler = async (
         status: { message: '', code: 1000 },
       })
     } catch (error: any) {
+      console.error(error)
       res.status(200).json({
         data: null,
         status: { message: error.message, code: 9999 },
@@ -36,7 +38,6 @@ const login = async (name: string, password: string) => {
       username: name,
     },
   })
-
 
   if (!user) {
     throw new Error('พาสเวิร์ดไม่ถูกต้อง')
