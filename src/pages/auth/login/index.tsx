@@ -3,8 +3,8 @@ import LoginPage from '@/modules/auth/login/Container'
 import { GetServerSidePropsContext } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 import { Request, Response } from 'express'
-import { checkToken } from '@/adapter'
 import { deleteCookie } from 'cookies-next'
+import { mockVerifyToken } from '@/adapter/mockVerifyToken'
 
 export default function Container() {
   return <LoginPage />
@@ -22,11 +22,8 @@ export async function getServerSideProps(
 
   console.log(logPrefix, { accessToken, code, sessionState })
   try {
-    const apiBaseUrl = `http://${ctx.req.headers.host}`
-    const validateTokenUrl = `${apiBaseUrl}/api/auth/validateToken`
     if (accessToken) {
-      const { status } = await checkToken(validateTokenUrl, accessToken)
-
+      const { status } = mockVerifyToken(accessToken)
       if (status !== 200) {
         deleteCookie(CookiesKey.accessToken, { res, req })
       } else {

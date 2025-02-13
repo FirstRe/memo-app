@@ -17,3 +17,5 @@ export type RoleType = 'ADMIN' | 'USER'
 export const propsLoader = {
   color: 'red',
 }
+
+export const secretKey = 'skey_test_memo'

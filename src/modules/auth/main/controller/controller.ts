@@ -10,6 +10,8 @@ import { IMemoResponse } from '@/types/api/memo/interface'
 import useSWRMutation from 'swr/mutation'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
+import { mockGetMemo } from '@/adapter/mockGetMemo'
+import { mockUpsertMemo } from '@/adapter/mockUpsert'
 
 export const useMainController = () => {
   const router = useRouter()
@@ -30,7 +32,7 @@ export const useMainController = () => {
     setIsShowNew,
   } = useGlobalHandler()
 
-  const { fetchUpsertMemo } = useQueryHandler(setValue)
+  const { fetchUpsertMemo } = useQueryHandler(setValue, userId)
 
   const onAddNew = useCallback(() => {
     setIsEnableAdd(false)
@@ -51,11 +53,11 @@ export const useMainController = () => {
 
   const onSave = useCallback(
     (memo: IMemo) => {
-      fetchUpsertMemo({ memo: memo.memo, index: memo.index })
+      fetchUpsertMemo(memo.memo, memo.index)
       setIsEnableAdd(true)
       setIsShowNew(true)
     },
-    [fetchUpsertMemo, setIsEnableAdd, setIsShowNew],
+    [setIsEnableAdd, setIsShowNew],
   )
 
   const onSubmit = useCallback(
@@ -66,9 +68,12 @@ export const useMainController = () => {
     },
     [handleSubmit, onSave],
   )
-
   const onLogout = useCallback(() => {
     Cookies.remove(CookiesKey.accessToken)
+    Cookies.remove(CookiesKey.email)
+    Cookies.remove(CookiesKey.userId)
+    Cookies.remove(CookiesKey.userRole)
+    localStorage.clear()
     router.push('/auth/login')
   }, [router])
 
@@ -94,45 +99,68 @@ export const useMainController = () => {
   }
 }
 
-const useQueryHandler = (setValue: UseFormSetValue<IMemoForm>) => {
-  const fetchGetMemo = (url: string) => axios.serviceApi.get(url)
+const useQueryHandler = (
+  setValue: UseFormSetValue<IMemoForm>,
+  userId: string | null,
+) => {
+  const fetch = useCallback(() => {
+    const { data, status } = mockGetMemo(defaultTo(userId, ''))
+    if (status === 200 && data !== null) {
+      setValue('memo', mapMemo(data))
+    }
+  }, [userId])
 
-  const { isLoading: isLoadingGetMemo, mutate } = useSWR(
-    '/memo/getMemo',
-    (endpoint: string) => fetchGetMemo(endpoint),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      onSuccess({ data }) {
-        setValue('memo', mapMemo(data.data))
-      },
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
+  const fetchMemo = useCallback(
+    (memo: string, index: number) => {
+      mockUpsertMemo(defaultTo(userId, ''), memo, index)
+      fetch()
     },
+    [userId, fetch],
   )
 
-  const fetchSaveMemo = (
-    url: string,
-    { arg }: { arg: { memo: string; index: number } },
-  ) => axios.serviceApi.post(url, arg)
+  // const fetchGetMemo = (url: string) => axios.serviceApi.get(url)
 
-  const { trigger, isMutating } = useSWRMutation(
-    '/memo/upsertMemo',
-    fetchSaveMemo,
-    {
-      onSuccess() {
-        mutate()
-      },
-    },
-  )
+  // const { isLoading: isLoadingGetMemo, mutate } = useSWR(
+  //   '/memo/getMemo',
+  //   (endpoint: string) => fetchGetMemo(endpoint),
+  //   {
+  //     revalidateOnFocus: false,
+  //     revalidateOnReconnect: false,
+  //     onSuccess({ data }) {
+  //       setValue('memo', mapMemo(data.data))
+  //     },
+  //   },
+  // )
+
+  // const fetchSaveMemo = (
+  //   url: string,
+  //   { arg }: { arg: { memo: string; index: number } },
+  // ) => axios.serviceApi.post(url, arg)
+
+  // const { trigger, isMutating } = useSWRMutation(
+  //   '/memo/upsertMemo',
+  //   fetchSaveMemo,
+  //   {
+  //     onSuccess() {
+  //       // mutate()
+  //     },
+  //   },
+  // )
 
   return {
-    isLoading: isLoadingGetMemo || isMutating,
-    mutate,
-    fetchUpsertMemo: trigger,
+    isLoading: false,
+    mutate: fetch,
+    // mutate,
+    fetchUpsertMemo: fetchMemo,
   }
 }
 
 const mapMemo = (data: IMemoResponse[]): IMemo[] => {
-  return data.map((d) => {
+  return data?.map((d) => {
     return {
       ...d,
       isNew: false,

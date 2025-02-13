@@ -4,7 +4,7 @@ import CardAntd from './views/card'
 import { useMainController } from './controller/controller'
 import { IMemo } from './interface'
 
-const Container = () => {
+const Container =  () => {
   const {
     memo,
     formHandler,
@@ -18,6 +18,7 @@ const Container = () => {
     isShowNew,
     userRole,
   } = useMainController()
+
   return (
     <Layout userEmail={userEmail} onLogout={onLogout}>
       <div className="flex  h-[calc(100vh-64px)] items-center justify-center">
@@ -31,7 +32,7 @@ const Container = () => {
           <div className="grid  max-h-[600px] grid-cols-1 gap-[18px] overflow-y-auto p-4 lg:grid-cols-3">
             {memo?.map((m: IMemo, index: number) => {
               return (
-                <>
+                <div key={index}>
                   <CardAntd
                     memo={m}
                     index={index}
@@ -41,7 +42,7 @@ const Container = () => {
                     isShowNew={isShowNew}
                     userRole={userRole}
                   />
-                </>
+                </div>
               )
             })}
             {isEnableAdd && (
