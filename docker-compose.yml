@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  memo:
+    container_name: memo-app
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - SECRET_KEY=skey_test_memo
+      - DATABASE_URL="file:./dev.db"
+    command: npm run dev
