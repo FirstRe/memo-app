@@ -26,7 +26,7 @@ const authRequestInterceptor = (axiosConfig: AxiosRequestConfig) => {
 }
 
 const serviceApi = Axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
+  baseURL: `/api`,
 })
 
 serviceApi.interceptors.request.use(authRequestInterceptor)
