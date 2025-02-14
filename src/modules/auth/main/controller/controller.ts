@@ -98,7 +98,7 @@ const useQueryHandler = (setValue: UseFormSetValue<IMemoForm>) => {
   const fetchGetMemo = (url: string) => axios.serviceApi.get(url)
 
   const { isLoading: isLoadingGetMemo, mutate } = useSWR(
-    '/memo/getMemo',
+    `/memo/getMemo`,
     (endpoint: string) => fetchGetMemo(endpoint),
     {
       revalidateOnFocus: false,

@@ -6,7 +6,8 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: '/api/:path*', // Ensure this is correctly set
+        destination: 'https://sea-lion-app-yh6w6.ondigitalocean.app/api/:path*', // Ensure this is correctly set
+        permanent: false,
       },
     ]
   },
