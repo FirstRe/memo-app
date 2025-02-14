@@ -10,6 +10,19 @@ export async function middleware(req: NextRequest) {
     const url = req.nextUrl.pathname
     console.log('middleawre', { url })
 
+    const res = NextResponse.next()
+
+    res.headers.append('Access-Control-Allow-Credentials', 'true')
+    res.headers.append('Access-Control-Allow-Origin', '*')
+    res.headers.append(
+      'Access-Control-Allow-Methods',
+      'GET,DELETE,PATCH,POST,PUT',
+    )
+    res.headers.append(
+      'Access-Control-Allow-Headers',
+      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+    )
+
     if (protectedPaths.some((path) => url.startsWith(path))) {
       const authorizationHeader = req.headers.get('authorization')
 
@@ -27,14 +40,14 @@ export async function middleware(req: NextRequest) {
       if (!accessToken) {
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
       }
-      const response = NextResponse.next()
+      // const response = NextResponse.next()
 
       const id = data.data.id
 
-      return response
+      return res
     }
 
-    return NextResponse.next()
+    return res
   } catch (error) {
     const loginUrl = new URL('/auth/login', req.url)
     return NextResponse.redirect(loginUrl)
