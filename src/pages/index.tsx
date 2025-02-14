@@ -1,10 +1,7 @@
 import { checkToken } from '@/adapter'
 import { CookiesKey } from '@/constant'
 import { deleteCookie } from 'cookies-next'
-import type {
-  GetServerSidePropsContext,
-  NextPage,
-} from 'next'
+import type { GetServerSidePropsContext, NextPage } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 import { Request, Response } from 'express'
 import Container from '@/modules/auth/main/Container'
@@ -31,6 +28,8 @@ export async function getServerSideProps(
     const validateTokenUrl = `${apiBaseUrl}/api/auth/validateToken`
     if (accessToken) {
       const { status } = await checkToken(validateTokenUrl, accessToken)
+
+      console.log(logPrefix, { status })
       if (status !== 200) {
         deleteCookie(CookiesKey.accessToken, { res, req })
         return {

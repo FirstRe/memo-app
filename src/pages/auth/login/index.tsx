@@ -26,7 +26,7 @@ export async function getServerSideProps(
     const validateTokenUrl = `${apiBaseUrl}/api/auth/validateToken`
     if (accessToken) {
       const { status } = await checkToken(validateTokenUrl, accessToken)
-
+      console.log(logPrefix, { status })
       if (status !== 200) {
         deleteCookie(CookiesKey.accessToken, { res, req })
       } else {
