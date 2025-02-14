@@ -65,7 +65,7 @@ const getToken = (user: IUser): string => {
     email: user.email,
     role: user.role,
   }
-  return jwt.sign(payload, `${process.env.SECRET_KEY}`)
+  return jwt.sign(payload, "skey_test_memo")
 }
 
 export default handler

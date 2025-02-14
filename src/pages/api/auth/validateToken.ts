@@ -16,7 +16,7 @@ const handler = (
 
       const accessToken = authorizationHeader?.replace('Bearer ', '') ?? ''
 
-      const verifyToken = jwt.verify(accessToken, `${process.env.SECRET_KEY}`)
+      const verifyToken = jwt.verify(accessToken, 'skey_test_memo')
 
       res.status(200).json({
         data: verifyToken,
