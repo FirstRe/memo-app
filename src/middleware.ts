@@ -24,7 +24,7 @@ export async function middleware(req: NextRequest) {
 
       const { data, status } = await checkToken(validateUrl, accessToken)
 
-      if (status !== 200) {
+      if (!accessToken) {
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
       }
       const response = NextResponse.next()
